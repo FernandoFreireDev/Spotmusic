@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>SpotMusic</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <link type="text/css" rel="stylesheet" href="/materialize/css/materialize.min.css"  media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="/materialize/css/style.css"  media="screen,projection"/>
+</head>
+<body>
+<nav>
+    <div class="nav-wrapper teal">
+        <a href="/" class="brand-logo">SpotMusic</a>
+    </div>
+</nav>
+<main class="container">
+
+    <section>
+        <a href="/playlist/list" class="waves-effect waves-light btn red darken-2 go-back-top"><i class="material-icons left">arrow_back</i>Back</a>
+        <div>
+            <div class="row">
+                <h3><span th:text="${playlist.name}"></span></h3>
+                <h5><span th:text="${playlist.description}"></span></h5>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div th:each="music: ${musics}">
+            <div class="row">
+                 <div class="input-field col s4">
+                     <p><span th:text="${music.name}"></span></p>
+                 </div>
+                <div class="input-field col s3">
+                    <p><span th:text="${music.album}"></span></p>
+                </div>
+                <div class="input-field col s3">
+                    <p><span th:text="${music.band}"></span></p>
+                </div>
+                <div class="input-field col s2">
+                    <a th:href="${(#mvc.url('PC#editMusic').arg(0, music.codigo)).build()}"><i class="material-icons">mode_edit</i></a>
+                    <a href="#" th:onclick="openModal([[${music.codigo}]], [[${playlist.codigo}]])"><i class="material-icons red-text modal-trigger">delete</i></a>
+                    <a onclick="openModal()">
+                        <i class="material-icons">delete</i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <h4>Add Music</h4>
+
+        <form method="post" action="">
+            Name: <input type="text" name="name" value="">
+            Album: <input type="text" name="album" value="">
+            Band: <input type="text" name="band" value="">
+            <button type="submit" class="waves-effect waves-light btn"><i class="material-icons left">add</i>Add</button>
+        </form>
+    </section>
+    <div class="fixed-action-btn direction-top" style="bottom: 45px; right: 24px;">
+        <a class="btn-floating btn-large light-blue accent-4">
+            <i class="material-icons">more_horiz</i>
+        </a>
+        <ul>
+            <li>
+                <a href="#modal-delete" class="btn-floating red modal-trigger" style="opacity: 0; transform: scale(0.4) translateY(40px) translateX(0px);">
+                    <i class="material-icons">delete</i>
+                </a>
+            </li>
+            <li>
+                <a th:href="${(#mvc.url('PC#edit').arg(0, playlist.codigo)).build()}" class="btn-floating yellow darken-1" style="opacity: 0; transform: scale(0.4) translateY(40px) translateX(0px);">
+                    <i class="material-icons">mode_edit</i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</main>
+
+<!-- Modal Structure -->
+<div id="modal-delete" class="modal">
+    <div class="modal-content">
+        <h4>Delete Playlist</h4>
+        <p>Do you really want to delete the playlist?</p>
+        <p>This operation can not be undone after confirmation.</p>
+    </div>
+    <div class="modal-footer">
+        <a class="modal-close waves-effect waves-green btn-flat red-text">Cancel</a>
+        <a th:href="${(#mvc.url('PC#delete').arg(0, playlist.codigo)).build()}" class="waves-effect waves-green btn-flat">Delete</a>
+    </div>
+</div>
+
+<div id="modal-delete-music" class="modal">
+    <div class="modal-content">
+        <h4>Delete Music</h4>
+        <p>Do you really want to delete the music?</p>
+        <p>This operation can not be undone after confirmation.</p>
+    </div>
+    <div class="modal-footer">
+        <a class="modal-close waves-effect waves-green btn-flat red-text">Cancel</a>
+        <a id="btn-delete-music" class="waves-effect waves-green btn-flat">Delete</a>
+    </div>
+</div>
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="/materialize/js/materialize.min.js"></script>
+<script type="text/javascript" src="/materialize/js/main.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function() {
+      $('.modal').modal();
+      $('.fixed-action-btn').floatingActionButton({
+        direction: 'top'
+      });
+    });
+
+    function openModal(id, playlist){
+        $('#modal-delete-music').modal('open');
+        $('#btn-delete-music').attr('href', `/music/delete/${id}/${playlist}`);
+    }
+</script>
+</body>
+</html>

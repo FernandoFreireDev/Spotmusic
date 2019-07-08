@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>SpotMusic</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <link type="text/css" rel="stylesheet" href="/materialize/css/materialize.min.css"  media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="/materialize/css/style.css"  media="screen,projection"/>
+</head>
+<body>
+<nav>
+    <div class="nav-wrapper teal">
+        <a href="/" class="brand-logo">SpotMusic</a>
+    </div>
+</nav>
+<main class="container">
+    <section>
+        <div>
+            <h1>Playlists</h1>
+            <a href="/playlist/new" class="waves-effect waves-light btn-small"><i class="material-icons left">add</i>New Playlist</a>
+        </div>
+    </section>
+    <section>
+        <div th:each="playlist : ${playlists}">
+            <div class="row">
+                <a th:href="${(#mvc.url('PC#view').arg(0, playlist.codigo)).build()}"><h5 th:text="${playlist.name}"></h5></a>
+                <span th:text="${playlist.description}"></span>
+            </div>
+        </div>
+    </section>
+</main>
+<script type="text/javascript" src="/materialize/js/materialize.min.js"></script>
+</body>
+</html>
