@@ -40,9 +40,6 @@
                 <div class="input-field col s2">
                     <a th:href="${(#mvc.url('PC#editMusic').arg(0, music.codigo)).build()}"><i class="material-icons">mode_edit</i></a>
                     <a href="#" th:onclick="openModal([[${music.codigo}]], [[${playlist.codigo}]])"><i class="material-icons red-text modal-trigger">delete</i></a>
-                    <a onclick="openModal()">
-                        <i class="material-icons">delete</i>
-                    </a>
                 </div>
             </div>
         </div>
