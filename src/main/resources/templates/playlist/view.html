@@ -38,7 +38,7 @@
                     <p><span th:text="${music.band}"></span></p>
                 </div>
                 <div class="input-field col s2">
-                    <a th:href="${(#mvc.url('PC#editMusic').arg(0, music.codigo)).build()}"><i class="material-icons">mode_edit</i></a>
+                    <a th:href="${(#mvc.url('MC#editMusic').arg(0, music.codigo)).build()}"><i class="material-icons">mode_edit</i></a>
                     <a href="#" th:onclick="openModal([[${music.codigo}]], [[${playlist.codigo}]])"><i class="material-icons red-text modal-trigger">delete</i></a>
                 </div>
             </div>
@@ -47,7 +47,7 @@
     <section>
         <h4>Add Music</h4>
 
-        <form method="post" action="">
+        <form method="post" th:action="@{/music/add/{codigo}(codigo=${playlist.codigo})}">
             Name: <input type="text" name="name" value="">
             Album: <input type="text" name="album" value="">
             Band: <input type="text" name="band" value="">

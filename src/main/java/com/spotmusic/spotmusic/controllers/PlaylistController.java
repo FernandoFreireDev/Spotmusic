@@ -6,111 +6,74 @@ import com.spotmusic.spotmusic.repository.MusicRepository;
 import com.spotmusic.spotmusic.repository.PlaylistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+@RequestMapping("/playlist")
 public class PlaylistController {
 
     @Autowired
-    private PlaylistRepository pr;
+    private PlaylistRepository playlistRepository;
 
     @Autowired
-    private MusicRepository mr;
+    private MusicRepository musicRepository;
 
-    @RequestMapping(value="/playlist/new", method = RequestMethod.GET)
+    @GetMapping("/new")
     public String form(){
         return "playlist/new";
     }
 
-    @RequestMapping(value="/playlist/new", method = RequestMethod.POST)
+    @PostMapping("/new")
     public String form(Playlist playlist){
-
-        pr.save(playlist);
-
+        playlistRepository.save(playlist);
         return "redirect:/playlist/list";
     }
 
-    @RequestMapping(value="/playlist/list", method = RequestMethod.GET)
+    @GetMapping("/list")
     public ModelAndView list(){
-        ModelAndView mav = new ModelAndView("playlist/list");
-        Iterable<Playlist> playlists = pr.findAll();
-        mav.addObject("playlists", playlists);
-        return mav;
+        ModelAndView modelAndView = new ModelAndView("playlist/list");
+        Iterable<Playlist> playlists = playlistRepository.findAll();
+        modelAndView.addObject("playlists", playlists);
+        return modelAndView;
     }
 
-    @RequestMapping(value="/playlist/view/{codigo}", method = RequestMethod.GET)
+    @GetMapping("/view/{codigo}")
     public ModelAndView view(@PathVariable("codigo") long codigo){
-        Playlist playlist = pr.findByCodigo(codigo);
-        ModelAndView mav = new ModelAndView("playlist/view");
-        mav.addObject("playlist", playlist);
+        Playlist playlist = playlistRepository.findByCodigo(codigo);
+        ModelAndView modelAndView = new ModelAndView("playlist/view");
+        modelAndView.addObject("playlist", playlist);
 
-        Iterable<Music> musics = mr.findByPlaylist(playlist);
-        mav.addObject("musics", musics);
+        Iterable<Music> musics = musicRepository.findByPlaylist(playlist);
+        modelAndView.addObject("musics", musics);
 
-        return mav;
+        return modelAndView;
     }
 
-    @RequestMapping(value="/playlist/view/{codigo}", method = RequestMethod.POST)
-    public String save(@PathVariable("codigo") long codigo, Music music){
-        Playlist playlist = pr.findByCodigo(codigo);
-        music.setPlaylist(playlist);
-        mr.save(music);
-        return "redirect:/playlist/view/{codigo}";
-    }
-
-    @RequestMapping(value="/playlist/edit/{codigo}", method = RequestMethod.GET)
+    @GetMapping("/edit/{codigo}")
     public ModelAndView edit(@PathVariable("codigo") long codigo){
-        Playlist playlist = pr.findByCodigo(codigo);
-        ModelAndView mav = new ModelAndView("playlist/edit");
-        mav.addObject("playlist", playlist);
+        Playlist playlist = playlistRepository.findByCodigo(codigo);
+        ModelAndView modelAndView = new ModelAndView("playlist/edit");
+        modelAndView.addObject("playlist", playlist);
 
-        return mav;
+        return modelAndView;
     }
 
-    @RequestMapping(value="/playlist/edit/{codigo}", method = RequestMethod.POST)
+    @PostMapping("/edit/{codigo}")
     public String editPost(@PathVariable("codigo") long codigo, Playlist playlist){
-        pr.save(playlist);
+        playlistRepository.save(playlist);
 
         return "redirect:/playlist/view/{codigo}";
     }
 
-    @RequestMapping("/playlist/delete")
+    @GetMapping("/delete")
     public String delete(long codigo) {
 
-        Playlist playlist = pr.findByCodigo(codigo);
-        mr.deleteByPlaylist(playlist);
-        pr.delete(playlist);
+        Playlist playlist = playlistRepository.findByCodigo(codigo);
+        musicRepository.deleteByPlaylist(playlist);
+        playlistRepository.delete(playlist);
 
         return "redirect:/playlist/list";
-    }
-
-    @RequestMapping(value="/music/edit/{codigo}", method = RequestMethod.GET)
-    public ModelAndView editMusic(@PathVariable("codigo") long codigo){
-        Music music = mr.findByCodigo(codigo);
-        ModelAndView mav = new ModelAndView("music/edit");
-        Long playlist = music.getPlaylist().getCodigo();
-        mav.addObject("music", music);
-        mav.addObject("playlist", playlist);
-
-        return mav;
-    }
-
-    @RequestMapping(value="/music/edit/{codigo}", method = RequestMethod.POST)
-    public String editMusicPost(@PathVariable("codigo") long codigo, Music music){
-        Music m = mr.findByCodigo(codigo);
-        music.setPlaylist(m.getPlaylist());
-        mr.save(music);
-        Long playlist = m.getPlaylist().getCodigo();
-        return "redirect:/playlist/view/" + playlist;
-    }
-
-    @RequestMapping("/music/delete/{codigo}/{playlist}")
-    public String deleteMusic(@PathVariable("codigo") long codigo, @PathVariable("playlist") long playlist) {
-        mr.deleteByCodigo(codigo);
-        return "redirect:/playlist/view/{playlist}";
     }
 
 }
